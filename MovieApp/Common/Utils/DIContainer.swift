@@ -23,11 +23,10 @@ final class DIContainer {
         return viewController
     }
     
-    func makeDetailViewController(movie: MovieDTO, router: AppRouterProtocol) -> DetailViewController {
+    func makeDetailViewController(movie: Movie, router: AppRouterProtocol) -> DetailViewController {
         let detailVC = DetailViewController()
-        let viewModel = DetailViewModel(router: router)
+        let viewModel = DetailViewModel(movie: movie, router: router)
         detailVC.setViewModel(viewModel)
-        detailVC.setMovie(movie)
         return detailVC
     }
 }

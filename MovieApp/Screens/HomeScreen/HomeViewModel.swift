@@ -9,7 +9,7 @@ import Foundation
 
 protocol HomeViewModelInterface {
     func getMovies()
-    var movies: [MovieDTO] { get }
+    var movies: [Movie] { get }
     func didSelectMovie(at index: Int)
     var onMoviesUpdated: (() -> Void)? { get set }
 }
@@ -19,7 +19,7 @@ final class HomeViewModel: HomeViewModelInterface {
     private let apiService: TMDBApiServiceProtocol?
     private let router: AppRouterProtocol
     
-    var movies: [MovieDTO] = [] {
+    var movies: [Movie] = [] {
         didSet {
             onMoviesUpdated?()
         }
@@ -36,11 +36,10 @@ final class HomeViewModel: HomeViewModelInterface {
         apiService?.getPopularMovies { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success(let movie):
-                if let movies = movie.results {
-                    DispatchQueue.main.async {
-                        self.movies = movies
-                    }
+            case .success(let response):
+                let domainMovies = response.results?.map { $0.toMovie() } ?? []
+                DispatchQueue.main.async {
+                    self.movies = domainMovies
                 }
             case .failure(let error):
                 print(error)

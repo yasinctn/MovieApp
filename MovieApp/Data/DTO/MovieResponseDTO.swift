@@ -49,3 +49,18 @@ enum OriginalLanguage: String, Codable {
     case ko = "ko"
     case zh = "zh"
 }
+
+extension MovieDTO {
+    func toMovie() -> Movie {
+        Movie(
+            id: id,
+            title: title,
+            voteAverageText: "⭐️ \(voteAverage)",
+            overview: overview,
+            posterURL: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)"),
+            backdropImageURL: URL(string: "https://image.tmdb.org/t/p/w500\(backdropPath)")
+        )
+    }
+    
+    
+}

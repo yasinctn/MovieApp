@@ -17,13 +17,7 @@ final class DetailViewController: UIViewController {
     private var voteLabel = UILabel()
     private var overviewLabel = UILabel()
     
-    
-    private var movie: MovieDTO?
     private var viewModel: DetailViewModelProtocol?
-    
-    func setMovie(_ movie: MovieDTO) {
-        self.movie = movie
-    }
     
     func setViewModel(_ viewModel: DetailViewModelProtocol) {
         self.viewModel = viewModel
@@ -40,20 +34,18 @@ final class DetailViewController: UIViewController {
 extension DetailViewController {
     
     func configure() {
-        if let movie {
+        
+        backdropImageView.sd_setImage(with: viewModel?.getImageUrl(), placeholderImage: UIImage(systemName: "photo"))
             
-            backdropImageView.sd_setImage(with: viewModel?.getImageUrl(for: movie.backdropPath), placeholderImage: UIImage(systemName: "photo"))
+        overviewLabel.text = viewModel?.getOverview()
+        voteLabel.text = viewModel?.getVote()
             
-            overviewLabel.text = movie.overview
-            voteLabel.text = "⭐️ \(movie.voteAverage)"
-            
-            
-        }
+           
     }
     
     private func setupUI() {
         view.backgroundColor = .white
-        title = movie?.title
+        title = viewModel?.getTitle()
         view.addSubview(backdropImageView)
         view.addSubview(voteLabel)
         view.addSubview(overviewLabel)

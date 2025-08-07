@@ -14,9 +14,9 @@ struct MovieCellViewModel {
 }
 
 extension MovieCellViewModel {
-    init(movie: MovieDTO) {
+    init(movie: Movie) {
         self.title = movie.title
-        self.voteAverageText = "⭐️ \(movie.voteAverage)"
-        self.imageURL = URL(string: "https://image.tmdb.org/t/p/w500\(movie.backdropPath)")
+        self.voteAverageText = movie.voteAverageText
+        self.imageURL = movie.backdropImageURL
     }
 }

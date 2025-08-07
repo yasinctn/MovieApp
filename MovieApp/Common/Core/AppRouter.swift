@@ -10,7 +10,7 @@ import UIKit
 
 protocol AppRouterProtocol {
     func start()
-    func navigateToDetail(with movie: MovieDTO)
+    func navigateToDetail(with movie: Movie)
 }
 
 final class AppRouter: AppRouterProtocol {
@@ -32,7 +32,7 @@ final class AppRouter: AppRouterProtocol {
         window.makeKeyAndVisible()
     }
     
-    func navigateToDetail(with movie: MovieDTO) {
+    func navigateToDetail(with movie: Movie) {
         let detailVC = container.makeDetailViewController(movie: movie, router: self)
         navigationController.pushViewController(detailVC, animated: true)
     }

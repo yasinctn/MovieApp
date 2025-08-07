@@ -8,24 +8,40 @@
 import Foundation
 
 protocol DetailViewModelProtocol {
-    func getImageUrl(for path: String) -> URL
+    func getImageUrl() -> URL?
+    func getOverview() -> String?
+    func getVote() -> String?
+    func getTitle() -> String?
 }
 
 final class DetailViewModel {
     
-    private let router: AppRouterProtocol
+    private let router: AppRouterProtocol?
+    private var movie: Movie?
     
-    var movies: [MovieDTO] = []
-    
-    init(router: AppRouterProtocol) {
+    init(movie: Movie, router: AppRouterProtocol) {
         self.router = router
+        self.movie = movie
     }
     
 }
 
 extension DetailViewModel: DetailViewModelProtocol {
-    
-    func getImageUrl(for path: String) -> URL {
-        return URL(string: "https://image.tmdb.org/t/p/w500\(path)")!
+    func getTitle() -> String? {
+        return movie?.title
     }
+    
+    func getImageUrl() -> URL? {
+        return movie?.posterURL
+    }
+    
+    func getOverview() -> String? {
+        return movie?.overview
+    }
+    
+    func getVote() -> String? {
+        return movie?.voteAverageText
+    }
+    
+    
 }
