@@ -33,7 +33,7 @@ final class HomeViewModel: HomeViewModelInterface {
     }
     
     func getMovies() {
-        apiService?.getPopularMovies { [weak self] result in
+        apiService?.getPopularMovies(page: 1) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success(let response):
@@ -49,6 +49,6 @@ final class HomeViewModel: HomeViewModelInterface {
     
     func didSelectMovie(at index: Int) {
         let selectedMovie = movies[index]
-        router.navigateToDetail(with: selectedMovie)
+        router.navigateToDetail(with: String(selectedMovie.id))
     }
 }

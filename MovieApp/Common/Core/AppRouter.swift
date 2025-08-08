@@ -10,7 +10,7 @@ import UIKit
 
 protocol AppRouterProtocol {
     func start()
-    func navigateToDetail(with movie: Movie)
+    func navigateToDetail(with id: String)
 }
 
 final class AppRouter: AppRouterProtocol {
@@ -27,13 +27,36 @@ final class AppRouter: AppRouterProtocol {
     
     func start() {
         let homeVC = container.makeHomeViewController(router: self)
-        navigationController.viewControllers = [homeVC]
-        window.rootViewController = navigationController
+        let favoritesVC = container.makeFavoritesViewController()
+        let profileVC = container.makeProfileViewController()
+        
+        homeVC.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
+        favoritesVC.tabBarItem = UITabBarItem(title: "Favorites", image: UIImage(systemName: "star"), tag: 1)
+        profileVC.tabBarItem = UITabBarItem(title: "Profile", image: UIImage(systemName: "person"), tag: 2)
+        
+        let tabBarController = MainTabBarController(viewControllers: [
+            UINavigationController(rootViewController: homeVC),
+            UINavigationController(rootViewController: favoritesVC),
+            UINavigationController(rootViewController: profileVC)
+        ])
+        
+        window.rootViewController = tabBarController
         window.makeKeyAndVisible()
     }
     
-    func navigateToDetail(with movie: Movie) {
-        let detailVC = container.makeDetailViewController(movie: movie, router: self)
-        navigationController.pushViewController(detailVC, animated: true)
+//    func start() {
+//        let homeVC = container.makeHomeViewController(router: self)
+//        navigationController.viewControllers = [homeVC]
+//        window.rootViewController = navigationController
+//        window.makeKeyAndVisible()
+//    }
+    
+    func navigateToDetail(with id: String) {
+        let detailVC = container.makeDetailViewController(id: id, router: self)
+        
+        if let tabBarController = window.rootViewController as? UITabBarController,
+           let navController = tabBarController.selectedViewController as? UINavigationController {
+            navController.pushViewController(detailVC, animated: true)
+        }
     }
 }

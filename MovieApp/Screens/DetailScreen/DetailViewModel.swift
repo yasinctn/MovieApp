@@ -8,40 +8,46 @@
 import Foundation
 
 protocol DetailViewModelProtocol {
-    func getImageUrl() -> URL?
-    func getOverview() -> String?
-    func getVote() -> String?
-    func getTitle() -> String?
+    func getDetails(id: String)
+    var onMovieDetailUpdated: (() -> Void)? { get set }
+    var movieDetail: MovieDetail? { get }
 }
 
 final class DetailViewModel {
     
     private let router: AppRouterProtocol?
-    private var movie: Movie?
+    private let apiService: TMDBApiServiceProtocol?
     
-    init(movie: Movie, router: AppRouterProtocol) {
-        self.router = router
-        self.movie = movie
+    var movieDetail: MovieDetail? {
+        didSet {
+            onMovieDetailUpdated?()
+        }
     }
+    
+    var onMovieDetailUpdated: (() -> Void)?
+    
+    init(apiService: TMDBApiServiceProtocol?, router: AppRouterProtocol) {
+        self.router = router
+        self.apiService = apiService
+    }
+    
     
 }
 
 extension DetailViewModel: DetailViewModelProtocol {
-    func getTitle() -> String? {
-        return movie?.title
-    }
     
-    func getImageUrl() -> URL? {
-        return movie?.posterURL
+    func getDetails(id: String) {
+        apiService?.getMovieDetail(id: id) { result in
+            switch result {
+            case .success(let movieDetail):
+                let domainMovieDetail = movieDetail.toMovieDetail()
+                DispatchQueue.main.async {
+                    self.movieDetail = domainMovieDetail
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
-    
-    func getOverview() -> String? {
-        return movie?.overview
-    }
-    
-    func getVote() -> String? {
-        return movie?.voteAverageText
-    }
-    
     
 }

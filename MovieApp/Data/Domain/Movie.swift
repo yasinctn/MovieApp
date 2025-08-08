@@ -15,3 +15,4 @@ struct Movie {
     let posterURL: URL?
     let backdropImageURL: URL?
 }
+

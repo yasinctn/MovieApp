@@ -10,11 +10,11 @@ import UIKit
 
 final class DIContainer {
     
-    private let apiService: TMDBApiServiceProtocol
+    // MARK: - Shared Instances
+    private lazy var networkClient: NetworkClientProtocol = makeNetworkClient()
+    private lazy var apiService: TMDBApiServiceProtocol = makeTMDBApiService()
     
-    init() {
-        self.apiService = TMDBApiService()
-    }
+    // MARK: - ViewController Factories
     
     func makeHomeViewController(router: AppRouterProtocol) -> HomeViewController {
         let viewController = HomeViewController()
@@ -23,11 +23,37 @@ final class DIContainer {
         return viewController
     }
     
-    func makeDetailViewController(movie: Movie, router: AppRouterProtocol) -> DetailViewController {
-        let detailVC = DetailViewController()
-        let viewModel = DetailViewModel(movie: movie, router: router)
-        detailVC.setViewModel(viewModel)
-        return detailVC
+    func makeDetailViewController(id: String, router: AppRouterProtocol) -> DetailViewController {
+        let viewController = DetailViewController()
+        let viewModel = DetailViewModel(apiService: apiService, router: router)
+        viewController.setViewModel(viewModel)
+        viewModel.getDetails(id: id)
+        return viewController
+    }
+    
+    func makeFavoritesViewController() -> UIViewController {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .white
+        vc.title = "Favorites"
+        return vc
+    }
+
+    func makeProfileViewController() -> UIViewController {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .white
+        vc.title = "Profile"
+        return vc
+    }
+    
+    // MARK: - Service & Client Factories
+    
+    private func makeNetworkClient() -> NetworkClientProtocol {
+        return NetworkClient()
+    }
+    
+    private func makeTMDBApiService() -> TMDBApiServiceProtocol {
+        return TMDBApiService(networkClient: networkClient)
     }
 }
+
 

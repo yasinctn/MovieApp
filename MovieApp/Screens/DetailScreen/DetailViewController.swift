@@ -27,25 +27,25 @@ final class DetailViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         configure()
-        
     }
 }
 
 extension DetailViewController {
     
     func configure() {
-        
-        backdropImageView.sd_setImage(with: viewModel?.getImageUrl(), placeholderImage: UIImage(systemName: "photo"))
-            
-        overviewLabel.text = viewModel?.getOverview()
-        voteLabel.text = viewModel?.getVote()
-            
-           
+        viewModel?.onMovieDetailUpdated = { [weak self] in
+            guard let self else { return }
+            backdropImageView.sd_setImage(with: viewModel?.movieDetail?.backdropImageURL, placeholderImage: UIImage(systemName: "photo"))
+                
+            overviewLabel.text = viewModel?.movieDetail?.overview
+            voteLabel.text = viewModel?.movieDetail?.voteAverageText
+            title = viewModel?.movieDetail?.title
+        }
     }
     
     private func setupUI() {
         view.backgroundColor = .white
-        title = viewModel?.getTitle()
+        
         view.addSubview(backdropImageView)
         view.addSubview(voteLabel)
         view.addSubview(overviewLabel)
@@ -63,27 +63,22 @@ extension DetailViewController {
     private func setupConstraints() {
         backdropImageView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.left.right.equalToSuperview()
+            make.left.equalToSuperview().offset(5)
+            make.right.equalToSuperview().offset(-5)
             make.height.equalTo(view.snp.height).multipliedBy(0.3)
         }
 
         overviewLabel.snp.makeConstraints { make in
-            make.top.equalTo(backdropImageView.snp.bottom).offset(16)
+            make.top.equalTo(voteLabel.snp.bottom).offset(16)
             make.left.equalToSuperview().offset(16)
-            make.right.equalToSuperview().offset(-80)
+            make.right.equalToSuperview().offset(-16)
         }
 
         voteLabel.snp.makeConstraints { make in
             make.centerY.equalTo(backdropImageView.snp.bottom)
-            make.left.equalTo(overviewLabel.snp.right).offset(8)
             make.right.equalToSuperview().offset(-16)
         }
-
-        
     }
-    
-   
-
 }
 
 

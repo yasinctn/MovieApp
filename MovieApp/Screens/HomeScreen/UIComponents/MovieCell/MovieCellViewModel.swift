@@ -17,6 +17,6 @@ extension MovieCellViewModel {
     init(movie: Movie) {
         self.title = movie.title
         self.voteAverageText = movie.voteAverageText
-        self.imageURL = movie.backdropImageURL
+        self.imageURL = movie.posterURL
     }
 }
