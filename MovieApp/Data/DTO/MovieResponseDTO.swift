@@ -44,10 +44,14 @@ struct MovieDTO: Codable {
 }
 
 enum OriginalLanguage: String, Codable {
-    case en = "en"
-    case ja = "ja"
-    case ko = "ko"
-    case zh = "zh"
+    case en, ja, ko, zh, nl, fr, es, de, ru // bildiklerin
+    case unknown
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(String.self)
+        self = OriginalLanguage(rawValue: rawValue) ?? .unknown
+    }
 }
 
 extension MovieDTO {

@@ -10,7 +10,7 @@ import Foundation
 struct MovieDetailDTO: Codable {
     let adult: Bool
     let backdropPath: String
-    let belongsToCollection: BelongsToCollection
+    let belongsToCollection: BelongsToCollection?
     let budget: Int
     let genres: [Genre]
     let homepage: String
@@ -109,7 +109,7 @@ extension MovieDetailDTO {
     func toMovieDetail() -> MovieDetail {
         MovieDetail(
             id: id,
-            title: belongsToCollection.name,
+            title: title,
             voteAverageText: "⭐️ \(voteAverage)",
             overview: overview,
             posterURL: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)"),

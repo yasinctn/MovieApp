@@ -6,7 +6,10 @@
 //
 
 protocol TMDBApiServiceProtocol {
+    func getNowPlaying(page: Int, completion: @escaping (Result<MovieResponseDTO, Error>) -> Void)
     func getPopularMovies(page: Int, completion: @escaping (Result<MovieResponseDTO, Error>) -> Void)
+    func getTopRated(page: Int, completion: @escaping (Result<MovieResponseDTO, Error>) -> Void)
+    func getUpcoming(page: Int, completion: @escaping (Result<MovieResponseDTO, Error>) -> Void)
     func getMovieDetail(id: String, completion: @escaping (Result<MovieDetailDTO, Error>) -> Void)
 }
 
@@ -16,6 +19,19 @@ final class TMDBApiService: TMDBApiServiceProtocol {
     
     init(networkClient: NetworkClientProtocol) {
         self.networkClient = networkClient
+    }
+    
+    
+    func getNowPlaying(page: Int, completion: @escaping (Result<MovieResponseDTO, any Error>) -> Void) {
+        networkClient.request(endpoint: .getNowPlaying(page: page), completion: completion)
+    }
+    
+    func getTopRated(page: Int, completion: @escaping (Result<MovieResponseDTO, any Error>) -> Void) {
+        networkClient.request(endpoint: .getTopRated(page: page), completion: completion)
+    }
+    
+    func getUpcoming(page: Int, completion: @escaping (Result<MovieResponseDTO, any Error>) -> Void) {
+        networkClient.request(endpoint: .getUpcoming(page: page), completion: completion)
     }
     
     func getPopularMovies(page: Int, completion: @escaping (Result<MovieResponseDTO, Error>) -> Void) {

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Alamofire
 
 protocol NetworkClientProtocol {
     func request<T: Decodable>(endpoint: APIEndpoint, completion: @escaping (Result<T, Error>) -> Void)

@@ -10,36 +10,44 @@ import Alamofire
 
 enum APIEndpoint {
     
+    case getNowPlaying(page: Int)
     case getPopularMovies(page: Int)
+    case getTopRated(page: Int)
+    case getUpcoming(page: Int)
     case getMovieDetail(id: String)
     
-    var bearerToken: String {
-        return ConfigManager.shared.tmdbBearerToken
+    typealias Parameters = [String: Any]
+    typealias Headers = [String : String]
+
+    private var bearerToken: String {
+        ConfigManager.shared.tmdbBearerToken
     }
     
-    var baseURL: String {
-        return ConfigManager.shared.tmdbBaseURL
+    private var baseURL: String {
+        ConfigManager.shared.tmdbBaseURL
     }
     
     var path: String {
         switch self {
+        case .getNowPlaying:
+            return "/movie/now_playing"
         case .getPopularMovies:
-            return "/discover/movie"
+            return "/movie/popular"
+        case .getTopRated:
+            return "/movie/top_rated"
+        case .getUpcoming:
+            return "/movie/upcoming"
         case .getMovieDetail(let id):
-            return "/movie/\(id)?language=en-US"
-        }
-    }
-    var method: HTTPMethod {
-        switch self {
-        case .getPopularMovies:
-            return .get
-        case .getMovieDetail:
-            return .get
+            return "/movie/\(id)"
         }
     }
     
+    var method: HTTPMethod {
+        return .get
+    }
+    
     var headers: HTTPHeaders {
-        return [
+        [
             "Authorization": "Bearer \(bearerToken)",
             "accept": "application/json"
         ]
@@ -47,13 +55,13 @@ enum APIEndpoint {
     
     var parameters: Parameters {
         switch self {
-        case .getPopularMovies(let page):
+        case .getNowPlaying(let page),
+             .getPopularMovies(let page),
+             .getTopRated(let page),
+             .getUpcoming(let page):
             return [
-                "include_adult": false,
-                "include_video": false,
                 "language": "en-US",
-                "page": page,
-                "sort_by": "popularity.desc"
+                "page": page
             ]
         case .getMovieDetail:
             return [
@@ -77,5 +85,3 @@ enum APIEndpoint {
     }
 }
 
-typealias Parameters = [String: Any]
-typealias Headers = [String : String]

@@ -17,16 +17,14 @@ final class DIContainer {
     // MARK: - ViewController Factories
     
     func makeHomeViewController(router: AppRouterProtocol) -> HomeViewController {
-        let viewController = HomeViewController()
         let viewModel = HomeViewModel(apiService: apiService, router: router)
-        viewController.setViewModel(viewModel)
+        let viewController = HomeViewController(viewModel: viewModel)
         return viewController
     }
     
     func makeDetailViewController(id: String, router: AppRouterProtocol) -> DetailViewController {
-        let viewController = DetailViewController()
         let viewModel = DetailViewModel(apiService: apiService, router: router)
-        viewController.setViewModel(viewModel)
+        let viewController = DetailViewController(viewModel: viewModel)
         viewModel.getDetails(id: id)
         return viewController
     }

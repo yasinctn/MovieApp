@@ -9,144 +9,73 @@ import UIKit
 import SnapKit
 
 final class HomeViewController: UIViewController {
-
-    private lazy var moviesTableView = UITableView()
-    private var moviesCollectionView: UICollectionView?
     
+    private lazy var tableView = UITableView()
     private var viewModel: HomeViewModelInterface?
-
+    
+    init(viewModel: HomeViewModelInterface?) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Filmler"
-        viewModel?.getMovies()
-//        prepareTableView()
-//        drawTableView()
-//        moviesTableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
-//        updateTableView()
-        prepareCollectionView()
-        drawCollectionView()
-        moviesCollectionView?.register(MovieCollectionViewCell.self, forCellWithReuseIdentifier: MovieCollectionViewCell.identifier)
-        updateCollectionView()
+        view.backgroundColor = .white
+        setupTableView()
+        viewModel?.getAllSections()
+        bindViewModel()
     }
     
-    func setViewModel(_ viewModel: HomeViewModelInterface) {
-        
-        self.viewModel = viewModel
-        
+    
+    private func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(MovieSectionCell.self, forCellReuseIdentifier: MovieSectionCell.identifier)
+        tableView.separatorStyle = .none
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
+    }
+    
+    private func bindViewModel() {
+        viewModel?.onMoviesUpdated = { [weak self] in
+            self?.tableView.reloadData()
+        }
     }
 }
 
-//MARK: - TableView
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel?.didSelectMovie(at: indexPath.row)
+    func numberOfSections(in tableView: UITableView) -> Int {
+        MovieSection.allCases.count
     }
-
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel?.movies.count ?? 0
+        1 // her section'da 1 tane yatay collection view olacak
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        260
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        MovieSection(rawValue: section)?.title
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.identifier, for: indexPath) as! MovieCell
-        if let movie = viewModel?.movies[indexPath.row] {
-            let cellViewModel = MovieCellViewModel(movie: movie)
-            cell.configure(with: cellViewModel)
+
+        guard let section = MovieSection(rawValue: indexPath.section),
+              let cell = tableView.dequeueReusableCell(withIdentifier: MovieSectionCell.identifier, for: indexPath) as? MovieSectionCell
+        else { return UITableViewCell() }
+        
+        let movies = viewModel?.movies(for: section) ?? []
+        cell.configure(with: movies)
+        cell.onSelect = { [weak self] movie in
+            self?.viewModel?.didSelectMovie(movie)
         }
         return cell
     }
 }
-
-extension HomeViewController {
-    
-    func drawTableView() {
-        view.addSubview(moviesTableView)
-        
-        moviesTableView.snp.makeConstraints { make in
-            make.top.bottom.left.right.equalToSuperview()
-        }
-    }
-    
-    private func prepareTableView() {
-        moviesTableView.delegate = self
-        moviesTableView.dataSource = self
-    }
-    
-    func updateTableView() {
-        self.viewModel?.onMoviesUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                self?.moviesTableView.reloadData()
-            }
-        }
-    }
-}
-
-//MARK: - CollectionView
-extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        viewModel?.movies.count ?? 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.identifier, for: indexPath) as! MovieCollectionViewCell
-        if let movie = viewModel?.movies[indexPath.row] {
-            let cellViewModel = MovieCellViewModel(movie: movie)
-            cell.configure(with: cellViewModel)
-        }
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let spacing: CGFloat = 16
-        let sectionInsets: CGFloat = 16 * 2
-        
-        let totalSpacing = spacing + sectionInsets
-        let availableWidth = collectionView.bounds.width - totalSpacing
-        let numberOfItemsPerRow: CGFloat = 2
-        let itemWidth = floor(availableWidth / numberOfItemsPerRow)
-        
-        return CGSize(width: itemWidth, height: 300)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        viewModel?.didSelectMovie(at: indexPath.item)
-    }
-}
-
-extension HomeViewController {
-    
-    func prepareCollectionView() {
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        
-        moviesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        
-        moviesCollectionView?.delegate = self
-        moviesCollectionView?.dataSource = self
-    }
-    
-    func drawCollectionView() {
-        guard let moviesCollectionView else { return }
-        view.addSubview(moviesCollectionView)
-        
-        moviesCollectionView.snp.makeConstraints { make in
-            make.top.bottom.left.right.equalToSuperview()
-        }
-    }
-    
-    func updateCollectionView() {
-        self.viewModel?.onMoviesUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                self?.moviesCollectionView?.reloadData()
-            }
-        }
-    }
-}
-
