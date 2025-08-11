@@ -10,7 +10,15 @@ import SnapKit
 
 final class HomeViewController: UIViewController {
     
-    private lazy var tableView = UITableView()
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        view.addSubview(tableView)
+        tableView.setup(delegate: self, cells: MovieSectionCell.self)
+        tableView.registerCell(MovieSectionCell.self)
+        tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        return tableView
+    }()
+    
     private var viewModel: HomeViewModelInterface?
     
     init(viewModel: HomeViewModelInterface?) {
@@ -25,20 +33,11 @@ final class HomeViewController: UIViewController {
         super.viewDidLoad()
         title = "Filmler"
         view.backgroundColor = .white
-        setupTableView()
         viewModel?.getAllSections()
         bindViewModel()
     }
     
     
-    private func setupTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(MovieSectionCell.self, forCellReuseIdentifier: MovieSectionCell.identifier)
-        tableView.separatorStyle = .none
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
-    }
     
     private func bindViewModel() {
         viewModel?.onMoviesUpdated = { [weak self] in

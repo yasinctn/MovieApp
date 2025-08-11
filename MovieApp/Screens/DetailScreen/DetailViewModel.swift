@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PromiseKit
 
 protocol DetailViewModelProtocol {
     func getDetails(id: String)
@@ -37,16 +38,16 @@ final class DetailViewModel {
 extension DetailViewModel: DetailViewModelProtocol {
     
     func getDetails(id: String) {
-        apiService?.getMovieDetail(id: id) { result in
-            switch result {
-            case .success(let movieDetail):
-                let domainMovieDetail = movieDetail.toMovieDetail()
-                DispatchQueue.main.async {
-                    self.movieDetail = domainMovieDetail
-                }
-            case .failure(let error):
-                print(error)
-            }
+        
+        apiService?.getMovieDetail(id: id)
+        .done(on: .main) { [weak self] detail in
+            self?.movieDetail = detail
+            self?.onMovieDetailUpdated?() // Callback varsa
+        }
+        .catch { error in
+            #if DEBUG
+            print("Detail error:", error)
+            #endif
         }
     }
     

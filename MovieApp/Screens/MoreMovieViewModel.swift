@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PromiseKit
 
 protocol MoreMovieViewModelInterface {
     func getMovies()
@@ -33,18 +34,7 @@ final class MoreMovieViewModel: MoreMovieViewModelInterface {
     }
     
     func getMovies() {
-        apiService?.getPopularMovies(page: 1) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success(let response):
-                let domainMovies = response.results?.map { $0.toMovie() } ?? []
-                DispatchQueue.main.async {
-                    self.movies = domainMovies
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
+       
     }
     
     func didSelectMovie(at index: Int) {

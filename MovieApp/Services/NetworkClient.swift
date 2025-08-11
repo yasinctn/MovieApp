@@ -6,25 +6,32 @@
 //
 
 import Foundation
+import Alamofire
+import PromiseKit
 
 protocol NetworkClientProtocol {
-    func request<T: Decodable>(endpoint: APIEndpoint, completion: @escaping (Result<T, Error>) -> Void)
+    func request<T: Decodable>(endpoint: APIEndpoint) -> Promise<T>
 }
 
 final class NetworkClient: NetworkClientProtocol {
-    func request<T: Decodable>(endpoint: APIEndpoint, completion: @escaping (Result<T, Error>) -> Void) {
-        do {
-            let request = try endpoint.asAFRequest()
-            request.responseDecodable(of: T.self) { response in
-                switch response.result {
-                case .success(let decoded):
-                    completion(.success(decoded))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
+
+    func request<T: Decodable>(endpoint: APIEndpoint) -> Promise<T> {
+        return Promise { seal in
+            do {
+                let dataRequest = try endpoint.asAFRequest()
+                dataRequest
+                    .validate()
+                    .responseDecodable(of: T.self, decoder: JSONDecoder()) { response in
+                        switch response.result {
+                        case .success(let decoded):
+                            seal.fulfill(decoded)
+                        case .failure(let error):
+                            seal.reject(error)
+                        }
+                    }
+            } catch {
+                seal.reject(error)
             }
-        } catch {
-            completion(.failure(error))
         }
     }
 }
