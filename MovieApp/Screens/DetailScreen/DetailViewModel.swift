@@ -42,7 +42,7 @@ extension DetailViewModel: DetailViewModelProtocol {
         apiService?.getMovieDetail(id: id)
         .done(on: .main) { [weak self] detail in
             self?.movieDetail = detail
-            self?.onMovieDetailUpdated?() // Callback varsa
+            self?.onMovieDetailUpdated?() 
         }
         .catch { error in
             #if DEBUG

@@ -11,12 +11,20 @@ import PromiseKit
 protocol HomeViewModelInterface {
     func getAllSections()
     var onMoviesUpdated: (() -> Void)? { get set }
-    func movies(for section: MovieSection) -> [Movie]
+    func movies(for section: MovieSectionType) -> [Movie]
     func didSelectMovie(_ movie: Movie)
+    func didTapShowAll(for section: MovieSectionType)
+    func getSectionsCount() -> Int
+    func getSection(at index: Int) -> MovieSectionType
 }
-
+//
 
 final class HomeViewModel: HomeViewModelInterface {
+    
+    func didTapShowAll(for section: MovieSectionType) {
+        router.navigateToMore(with: section)
+    }
+    
 
     private let apiService: TMDBApiServiceProtocol
     private let router: AppRouterProtocol
@@ -55,7 +63,7 @@ final class HomeViewModel: HomeViewModelInterface {
         }
     }
     
-    func movies(for section: MovieSection) -> [Movie] {
+    func movies(for section: MovieSectionType) -> [Movie] {
         switch section {
         case .nowPlaying: return nowPlaying
         case .popular: return popular
@@ -67,4 +75,17 @@ final class HomeViewModel: HomeViewModelInterface {
     func didSelectMovie(_ movie: Movie) {
         router.navigateToDetail(with: String(movie.id))
     }
+    
+    func getSectionsCount() -> Int {
+        return MovieSectionType.allCases.count
+    }
+    
+    func getSection(at index: Int) -> MovieSectionType {
+        guard index < MovieSectionType.allCases.count else {
+            return .popular // Default fallback
+        }
+        return MovieSectionType.allCases[index]
+    }
 }
+
+

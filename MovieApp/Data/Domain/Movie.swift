@@ -10,9 +10,15 @@ import Foundation
 struct Movie {
     let id: Int
     let title: String
-    let voteAverageText: String
     let overview: String
     let posterURL: URL?
     let backdropImageURL: URL?
+    let voteAverage: Double
+    let voteCount: Int
+    let releaseDateString: String?      // "YYYY-MM-DD" (TMDB)
+    let originalLanguageCode: String?   // "en", "tr" ...
+
+    var voteAverageText: String { String(format: "⭐️ %.1f", voteAverage) }
 }
+
 

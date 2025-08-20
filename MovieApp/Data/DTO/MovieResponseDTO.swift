@@ -56,14 +56,18 @@ enum OriginalLanguage: String, Codable {
 
 extension MovieDTO {
     func toMovie() -> Movie {
-        Movie(
-            id: id,
-            title: title,
-            voteAverageText: "⭐️ \(voteAverage)",
-            overview: overview,
-            posterURL: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)"),
-            backdropImageURL: URL(string: "https://image.tmdb.org/t/p/w500\(backdropPath)")
-        )
+        
+        return Movie(
+                    id: id,
+                    title: title,
+                    overview: overview,
+                    posterURL: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)"),
+                    backdropImageURL: URL(string: "https://image.tmdb.org/t/p/w500\(backdropPath)"),
+                    voteAverage: voteAverage,
+                    voteCount: voteCount,
+                    releaseDateString: releaseDate,
+                    originalLanguageCode: originalLanguage.rawValue
+                )
     }
     
     

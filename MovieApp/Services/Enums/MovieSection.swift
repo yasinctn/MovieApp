@@ -2,23 +2,35 @@
 //  MovieSection.swift
 //  MovieApp
 //
-//  Created by Yasin Çetin on 8.08.2025.
+//  Created by Yasin Çetin on 12.08.2025.
 //
 
 import Foundation
 
-enum MovieSection: Int, CaseIterable {
-    case nowPlaying
-    case popular
-    case topRated
-    case upcoming
+protocol SectionModel {
+    var sectionTitle: String? { get }
+    var itemCount: Int { get }
+    var sectionType: MovieSectionType { get }
+    func getItem(at index: Int) -> Movie?
+}
+
+struct MovieSection: SectionModel {
+    var sectionTitle: String?
+    var movies: [Movie]
+    var sectionType: MovieSectionType
     
-    var title: String {
-        switch self {
-        case .nowPlaying: return "Now Playing"
-        case .popular: return "Popular"
-        case .topRated: return "Top Rated"
-        case .upcoming: return "Upcoming"
-        }
+    var itemCount: Int {
+        return movies.count
+    }
+    
+    func getItem(at index: Int) -> Movie? {
+        guard index < movies.count else { return nil }
+        return movies[index]
+    }
+    
+    init(sectionType: MovieSectionType, movies: [Movie] = []) {
+        self.sectionType = sectionType
+        self.sectionTitle = sectionType.title
+        self.movies = movies
     }
 }

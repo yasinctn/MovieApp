@@ -27,7 +27,7 @@ final class MovieCell: UITableViewCell {
 
     func configure(with viewModel: MovieCellViewModel) {
         titleLabel.text = viewModel.title
-        voteLabel.text = viewModel.voteAverageText
+        voteLabel.text = viewModel.ratingText
         posterImageView.sd_setImage(with: viewModel.imageURL, placeholderImage: UIImage(systemName: "photo"))
     }
 

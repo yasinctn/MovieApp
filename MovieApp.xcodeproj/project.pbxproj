@@ -17,22 +17,9 @@
 		B06629292E41DE8D00D1760E /* MovieApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MovieApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B066293B2E41DE9000D1760E /* Exceptions for "MovieApp" folder in "MovieApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = B06629282E41DE8D00D1760E /* MovieApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B066292B2E41DE8D00D1760E /* MovieApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				B066293B2E41DE9000D1760E /* Exceptions for "MovieApp" folder in "MovieApp" target */,
-			);
 			path = MovieApp;
 			sourceTree = "<group>";
 		};

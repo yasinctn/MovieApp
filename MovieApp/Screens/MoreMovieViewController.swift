@@ -11,71 +11,41 @@ import SnapKit
 
 final class MoreMovieViewController: UIViewController {
 
-    private lazy var moviesTableView = UITableView()
-    private var moviesCollectionView: UICollectionView?
+    
+    private lazy var moviesCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 16
+        layout.minimumInteritemSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        
+        return UICollectionView(frame: .zero, collectionViewLayout: layout)
+    }()
     
     private var viewModel: MoreMovieViewModelInterface?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Filmler"
-        viewModel?.getMovies()
+        // değişecek
         prepareCollectionView()
-        drawCollectionView()
-        moviesCollectionView?.register(MovieCollectionViewCell.self, forCellWithReuseIdentifier: MovieCollectionViewCell.identifier)
+        makeConstraints()
+        moviesCollectionView.register(MovieCollectionViewCell.self, forCellWithReuseIdentifier: MovieCollectionViewCell.identifier)
         updateCollectionView()
     }
     
-    func setViewModel(_ viewModel: MoreMovieViewModelInterface) {
-        
+    init(viewModel: MoreMovieViewModelInterface?) {
+        super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
-        
-    }
-}
-
-//MARK: - TableView
-extension MoreMovieViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel?.didSelectMovie(at: indexPath.row)
-    }
-
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel?.movies.count ?? 0
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.identifier, for: indexPath) as! MovieCell
-        if let movie = viewModel?.movies[indexPath.row] {
-            let cellViewModel = MovieCellViewModel(movie: movie)
-            cell.configure(with: cellViewModel)
-        }
-        return cell
-    }
-}
-
-extension MoreMovieViewController {
-    
-    func drawTableView() {
-        view.addSubview(moviesTableView)
-        
-        moviesTableView.snp.makeConstraints { make in
-            make.top.bottom.left.right.equalToSuperview()
-        }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    private func prepareTableView() {
-        moviesTableView.delegate = self
-        moviesTableView.dataSource = self
-    }
-    
-    func updateTableView() {
-        self.viewModel?.onMoviesUpdated = { [weak self] in
-            DispatchQueue.main.async {
-                self?.moviesTableView.reloadData()
-            }
-        }
+    private func prepareCollectionView() {
+        moviesCollectionView.delegate = self
+        moviesCollectionView.dataSource = self
     }
 }
 
@@ -115,22 +85,8 @@ extension MoreMovieViewController: UICollectionViewDelegate, UICollectionViewDat
 
 extension MoreMovieViewController {
     
-    func prepareCollectionView() {
+    func makeConstraints() {
         
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        
-        moviesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        
-        moviesCollectionView?.delegate = self
-        moviesCollectionView?.dataSource = self
-    }
-    
-    func drawCollectionView() {
-        guard let moviesCollectionView else { return }
         view.addSubview(moviesCollectionView)
         
         moviesCollectionView.snp.makeConstraints { make in
@@ -141,7 +97,7 @@ extension MoreMovieViewController {
     func updateCollectionView() {
         self.viewModel?.onMoviesUpdated = { [weak self] in
             DispatchQueue.main.async {
-                self?.moviesCollectionView?.reloadData()
+                self?.moviesCollectionView.reloadData()
             }
         }
     }

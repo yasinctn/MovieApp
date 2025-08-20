@@ -11,6 +11,7 @@ import UIKit
 protocol AppRouterProtocol {
     func start()
     func navigateToDetail(with id: String)
+    func navigateToMore(with section: MovieSectionType)
 }
 
 final class AppRouter: AppRouterProtocol {
@@ -53,6 +54,15 @@ final class AppRouter: AppRouterProtocol {
     
     func navigateToDetail(with id: String) {
         let detailVC = container.makeDetailViewController(id: id, router: self)
+        
+        if let tabBarController = window.rootViewController as? UITabBarController,
+           let navController = tabBarController.selectedViewController as? UINavigationController {
+            navController.pushViewController(detailVC, animated: true)
+        }
+    }
+    
+    func navigateToMore(with id: MovieSectionType) {
+        let detailVC = container.makeMoreMovieViewController(section: id, router: self)
         
         if let tabBarController = window.rootViewController as? UITabBarController,
            let navController = tabBarController.selectedViewController as? UINavigationController {

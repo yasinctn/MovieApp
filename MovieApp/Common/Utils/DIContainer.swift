@@ -29,6 +29,14 @@ final class DIContainer {
         return viewController
     }
     
+    func makeMoreMovieViewController(section: MovieSectionType, router: AppRouterProtocol) -> MoreMovieViewController {
+        let viewModel = MoreMovieViewModel(apiService: apiService, router: router)
+        let viewController = MoreMovieViewController(viewModel: viewModel)
+        viewModel.getMovies(for: section)
+        return viewController
+        
+    }
+    
     func makeFavoritesViewController() -> UIViewController {
         let vc = UIViewController()
         vc.view.backgroundColor = .white
