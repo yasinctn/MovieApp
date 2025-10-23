@@ -161,7 +161,7 @@ extension DetailViewController {
     
     private func setupUI() {
 
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
 
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -185,15 +185,15 @@ extension DetailViewController {
         overviewLabel.font = .systemFont(ofSize: 15)
         overviewLabel.numberOfLines = 0
         overviewLabel.lineBreakMode = .byWordWrapping
-        overviewLabel.textColor = .darkGray
+        overviewLabel.textColor = .secondaryLabel
 
-        overviewTitleLabel.text = "Özet"
+        overviewTitleLabel.text = "Overview"
         overviewTitleLabel.font = .systemFont(ofSize: 18, weight: .bold)
-        overviewTitleLabel.textColor = .black
+        overviewTitleLabel.textColor = .label
 
         voteLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         voteLabel.textColor = .systemOrange
-        voteLabel.backgroundColor = .white.withAlphaComponent(0.9)
+        voteLabel.backgroundColor = .secondarySystemBackground
         voteLabel.layer.cornerRadius = 8
         voteLabel.clipsToBounds = true
         voteLabel.textAlignment = .center
@@ -239,13 +239,13 @@ extension DetailViewController {
 
     private func setupErrorView() {
         errorView.isHidden = true
-        errorView.backgroundColor = .white
+        errorView.backgroundColor = .systemBackground
 
         errorView.addSubview(errorLabel)
         errorView.addSubview(retryButton)
 
         errorLabel.font = .systemFont(ofSize: 16, weight: .medium)
-        errorLabel.textColor = .darkGray
+        errorLabel.textColor = .secondaryLabel
         errorLabel.textAlignment = .center
         errorLabel.numberOfLines = 0
 

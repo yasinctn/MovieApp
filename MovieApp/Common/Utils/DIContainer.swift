@@ -39,14 +39,14 @@ final class DIContainer {
     
     func makeFavoritesViewController() -> UIViewController {
         let vc = UIViewController()
-        vc.view.backgroundColor = .white
+        vc.view.backgroundColor = .systemBackground
         vc.title = "Favorites"
         return vc
     }
 
     func makeProfileViewController() -> UIViewController {
         let vc = UIViewController()
-        vc.view.backgroundColor = .white
+        vc.view.backgroundColor = .systemBackground
         vc.title = "Profile"
         return vc
     }

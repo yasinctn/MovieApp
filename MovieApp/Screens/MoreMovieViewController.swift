@@ -18,8 +18,10 @@ final class MoreMovieViewController: UIViewController {
         layout.minimumLineSpacing = 16
         layout.minimumInteritemSpacing = 10
         layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        
-        return UICollectionView(frame: .zero, collectionViewLayout: layout)
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .systemBackground
+        return collectionView
     }()
     
     private var viewModel: MoreMovieViewModelInterface?
@@ -27,7 +29,7 @@ final class MoreMovieViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Filmler"
-        // değişecek
+        view.backgroundColor = .systemBackground
         prepareCollectionView()
         makeConstraints()
         moviesCollectionView.register(MovieCollectionViewCell.self, forCellWithReuseIdentifier: MovieCollectionViewCell.identifier)
