@@ -113,9 +113,13 @@ extension MovieDetailDTO {
             voteAverageText: "⭐️ \(voteAverage)",
             overview: overview,
             posterURL: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)"),
-            backdropImageURL: URL(string: "https://image.tmdb.org/t/p/w500\(backdropPath)")
+            backdropImageURL: URL(string: "https://image.tmdb.org/t/p/w500\(backdropPath)"),
+            genres: genres.compactMap { $0.name },
+            runtime: runtime > 0 ? runtime : nil,
+            releaseDate: releaseDate.isEmpty ? nil : releaseDate,
+            tagline: tagline.isEmpty ? nil : tagline
         )
     }
-    
-    
+
+
 }

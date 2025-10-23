@@ -19,10 +19,15 @@ final class ConfigManager {
     }
 
     var tmdbBaseURL: String {
-        return config["TMDBBaseURL"] as? String ?? ""
+        return config["TMDBBaseURL"] as? String ?? "https://api.themoviedb.org/3"
     }
 
     var tmdbBearerToken: String {
-        return config["TMDBBearerToken"] as? String ?? ""
+        
+        let token = config["TMDBBearerToken"] as? String ?? ""
+        if token.isEmpty {
+            print("⚠️ WARNING: TMDB Bearer Token is missing! Please add it to Secrets.plist file with key 'TMDBBearerToken'")
+        }
+        return token
     }
 }
