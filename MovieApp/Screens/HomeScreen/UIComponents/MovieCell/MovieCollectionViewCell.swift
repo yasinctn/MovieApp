@@ -13,6 +13,9 @@ final class MovieCollectionViewCell: UICollectionViewCell {
 
     static let identifier = "MovieCollectionViewCell"
 
+    // Favorite button callback
+    var onFavoriteButtonTapped: (() -> Void)?
+
     // Card container (shadow + corner)
     private let cardView: UIView = {
         let v = UIView()
@@ -37,6 +40,19 @@ final class MovieCollectionViewCell: UICollectionViewCell {
 
     // Alt tarafta okunurluk için gradient
     private let gradientLayer = CAGradientLayer()
+
+    // Favorite button (üst sol)
+    private let favoriteButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.tintColor = .systemRed
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+        btn.setImage(UIImage(systemName: "heart", withConfiguration: config), for: .normal)
+        btn.setImage(UIImage(systemName: "heart.fill", withConfiguration: config), for: .selected)
+        btn.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        btn.layer.cornerRadius = 18
+        btn.layer.masksToBounds = true
+        return btn
+    }()
 
     // Rating badge (üst sağ)
     private let ratingContainer: UIVisualEffectView = {
@@ -78,8 +94,13 @@ final class MovieCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        favoriteButton.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
     }
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    @objc private func favoriteButtonTapped() {
+        onFavoriteButtonTapped?()
+    }
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -98,16 +119,23 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         titleLabel.text = nil
         metaLabel.text = nil
         ratingLabel.text = nil
+        favoriteButton.isSelected = false
+        onFavoriteButtonTapped = nil
     }
 
     func configure(with vm: MovieCellViewModel) {
         titleLabel.text = vm.title
         metaLabel.text = vm.metaText
         ratingLabel.text = vm.ratingText
+        favoriteButton.isSelected = vm.isFavorite
         posterImageView.sd_setImage(
             with: vm.imageURL,
             placeholderImage: UIImage(systemName: "photo")
         )
+    }
+
+    func updateFavoriteState(_ isFavorite: Bool) {
+        favoriteButton.isSelected = isFavorite
     }
 
     private func setupUI() {
@@ -123,6 +151,9 @@ final class MovieCollectionViewCell: UICollectionViewCell {
         gradientLayer.locations = [0.55, 1.0]
         gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+
+        // Favorite button
+        contentView.addSubview(favoriteButton)
 
         // Rating badge
         contentView.addSubview(ratingContainer)
@@ -146,6 +177,12 @@ final class MovieCollectionViewCell: UICollectionViewCell {
             make.edges.equalToSuperview()
             // İstersen oran:
             // make.height.equalTo(posterImageView.snp.width).multipliedBy(1.5)
+        }
+
+        favoriteButton.snp.makeConstraints { make in
+            make.top.equalTo(cardView).offset(8)
+            make.leading.equalTo(cardView).offset(8)
+            make.width.height.equalTo(36)
         }
 
         ratingContainer.snp.makeConstraints { make in

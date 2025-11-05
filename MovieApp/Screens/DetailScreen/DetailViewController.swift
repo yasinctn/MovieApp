@@ -25,22 +25,61 @@ final class DetailViewController: UIViewController {
     private var runtimeLabel = UILabel()
     private var releaseDateLabel = UILabel()
     private var overviewTitleLabel = UILabel()
+    private lazy var favoriteButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.tintColor = .systemRed
+        let config = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        button.setImage(UIImage(systemName: "heart", withConfiguration: config), for: .normal)
+        button.setImage(UIImage(systemName: "heart.fill", withConfiguration: config), for: .selected)
+        button.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
+        return button
+    }()
 
     private var viewModel: DetailViewModelProtocol?
-    
+
     init(viewModel: DetailViewModelProtocol?) {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupNavigationBar()
         configure()
+    }
+
+    @objc private func favoriteButtonTapped() {
+        guard let movieDetail = viewModel?.movieDetail else { return }
+
+        // Convert MovieDetail to Movie for favorites
+        let movie = Movie(
+            id: movieDetail.id,
+            title: movieDetail.title ?? "",
+            overview: movieDetail.overview,
+            posterURL: movieDetail.posterURL,
+            backdropImageURL: movieDetail.backdropImageURL,
+            voteAverage: Double(movieDetail.voteAverageText.replacingOccurrences(of: "⭐️ ", with: "")) ?? 0.0,
+            voteCount: 0,
+            releaseDateString: movieDetail.releaseDate,
+            originalLanguageCode: nil
+        )
+
+        FavoritesService.shared.toggleFavorite(movie: movie)
+        updateFavoriteButtonState()
+    }
+
+    private func setupNavigationBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: favoriteButton)
+    }
+
+    private func updateFavoriteButtonState() {
+        guard let movieDetail = viewModel?.movieDetail else { return }
+        favoriteButton.isSelected = FavoritesService.shared.isFavorite(movieId: movieDetail.id)
     }
     
 }
@@ -59,6 +98,9 @@ extension DetailViewController {
             overviewLabel.text = movieDetail.overview
             voteLabel.text = movieDetail.voteAverageText
             title = movieDetail.title
+
+            // Update favorite button state
+            updateFavoriteButtonState()
 
             // Tagline
             if let tagline = movieDetail.tagline {

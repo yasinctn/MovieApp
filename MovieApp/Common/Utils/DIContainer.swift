@@ -37,11 +37,10 @@ final class DIContainer {
         
     }
     
-    func makeFavoritesViewController() -> UIViewController {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .systemBackground
-        vc.title = "Favorites"
-        return vc
+    func makeFavoritesViewController(router: AppRouterProtocol) -> UIViewController {
+        let viewModel = FavoritesViewModel(router: router as! AppRouter)
+        let viewController = FavoritesViewController(viewModel: viewModel)
+        return viewController
     }
 
     func makeProfileViewController() -> UIViewController {

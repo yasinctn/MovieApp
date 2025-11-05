@@ -100,14 +100,25 @@ extension HomeViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.identifier, for: indexPath) as? MovieCollectionViewCell else {
             return UICollectionViewCell()
         }
-        
+
         let sectionType = viewModel.getSection(at: indexPath.section)
         let items = viewModel.movies(for: sectionType)
         guard indexPath.item < items.count else { return cell }
-        
+
         let movie = items[indexPath.item]
         let movieViewModel = MovieCellViewModel(movie: movie)
         cell.configure(with: movieViewModel)
+
+        // Favorite button handler
+        cell.onFavoriteButtonTapped = { [weak cell] in
+            guard let cell = cell else { return }
+            FavoritesService.shared.toggleFavorite(movie: movie)
+
+            // Update UI immediately
+            let updatedViewModel = MovieCellViewModel(movie: movie)
+            cell.updateFavoriteState(updatedViewModel.isFavorite)
+        }
+
         return cell
     }
     

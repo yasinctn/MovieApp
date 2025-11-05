@@ -63,6 +63,16 @@ extension MoreMovieViewController: UICollectionViewDelegate, UICollectionViewDat
         if let movie = viewModel?.movies[indexPath.row] {
             let cellViewModel = MovieCellViewModel(movie: movie)
             cell.configure(with: cellViewModel)
+
+            // Favorite button handler
+            cell.onFavoriteButtonTapped = { [weak cell] in
+                guard let cell = cell else { return }
+                FavoritesService.shared.toggleFavorite(movie: movie)
+
+                // Update UI immediately
+                let updatedViewModel = MovieCellViewModel(movie: movie)
+                cell.updateFavoriteState(updatedViewModel.isFavorite)
+            }
         }
         return cell
     }

@@ -8,15 +8,22 @@
 import Foundation
 
 struct MovieCellViewModel {
-    
+
     private let movie: Movie
-    
-    init(movie: Movie) {
+    private let favoritesService: FavoritesServiceProtocol
+
+    init(movie: Movie, favoritesService: FavoritesServiceProtocol = FavoritesService.shared) {
         self.movie = movie
+        self.favoritesService = favoritesService
     }
 
+    var movieId: Int { movie.id }
     var title: String { movie.title }
     var imageURL: URL? { movie.posterURL }
+
+    var isFavorite: Bool {
+        favoritesService.isFavorite(movieId: movie.id)
+    }
 
     var ratingText: String {
         String(format: "%.1f", movie.voteAverage)
