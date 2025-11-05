@@ -65,7 +65,8 @@ enum APIEndpoint {
             ]
         case .getMovieDetail:
             return [
-                "language": "en-US"
+                "language": "en-US",
+                "append_to_response": "credits"
             ]
         }
     }

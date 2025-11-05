@@ -34,14 +34,14 @@ struct MovieCellViewModel {
             guard
                 let s = movie.releaseDateString,
                 let d = ISO8601DateFormatter.iso8601yyyyMMdd.date(from: s)
-            else { return "Tarih yok" }
+            else { return "N/A" }
             let f = DateFormatter()
             f.dateFormat = "yyyy"
             return f.string(from: d)
         }()
 
         let lang = movie.originalLanguageCode?.uppercased() ?? "N/A"
-        return "\(year) • \(lang) • \(movie.voteCount) oy"
+        return "\(year) • \(lang) • \(movie.voteCount) votes"
     }
 }
 

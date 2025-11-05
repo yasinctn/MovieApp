@@ -29,6 +29,7 @@ struct MovieDetailDTO: Codable {
     let video: Bool
     let voteAverage: Double
     let voteCount: Int
+    let credits: Credits?
 
     enum CodingKeys: String, CodingKey {
         case adult
@@ -49,6 +50,26 @@ struct MovieDetailDTO: Codable {
         case status, tagline, title, video
         case voteAverage = "vote_average"
         case voteCount = "vote_count"
+        case credits
+    }
+}
+
+// MARK: - Credits
+struct Credits: Codable {
+    let cast: [CastDTO]
+}
+
+// MARK: - CastDTO
+struct CastDTO: Codable {
+    let id: Int
+    let name: String
+    let character: String
+    let profilePath: String?
+    let order: Int
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, character, order
+        case profilePath = "profile_path"
     }
 }
 
@@ -107,7 +128,17 @@ struct SpokenLanguage: Codable {
 
 extension MovieDetailDTO {
     func toMovieDetail() -> MovieDetail {
-        MovieDetail(
+        let castMembers = credits?.cast.prefix(10).map { castDTO in
+            Cast(
+                id: castDTO.id,
+                name: castDTO.name,
+                character: castDTO.character,
+                profilePath: castDTO.profilePath,
+                order: castDTO.order
+            )
+        } ?? []
+
+        return MovieDetail(
             id: id,
             title: title,
             voteAverageText: "⭐️ \(voteAverage)",
@@ -117,9 +148,8 @@ extension MovieDetailDTO {
             genres: genres.compactMap { $0.name },
             runtime: runtime > 0 ? runtime : nil,
             releaseDate: releaseDate.isEmpty ? nil : releaseDate,
-            tagline: tagline.isEmpty ? nil : tagline
+            tagline: tagline.isEmpty ? nil : tagline,
+            cast: Array(castMembers)
         )
     }
-
-
 }

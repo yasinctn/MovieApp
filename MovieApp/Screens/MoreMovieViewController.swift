@@ -28,7 +28,7 @@ final class MoreMovieViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Filmler"
+        title = "Movies"
         view.backgroundColor = .systemBackground
         prepareCollectionView()
         makeConstraints()

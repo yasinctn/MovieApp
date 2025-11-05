@@ -34,7 +34,7 @@ final class FavoritesViewController: UIViewController {
 
     private let emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.text = "Henüz favori film eklemediniz\n❤️"
+        label.text = "No favorite movies yet\n❤️"
         label.font = .systemFont(ofSize: 18, weight: .medium)
         label.textColor = .secondaryLabel
         label.textAlignment = .center
@@ -69,7 +69,7 @@ final class FavoritesViewController: UIViewController {
 
     // MARK: - Setup
     private func setupUI() {
-        title = "Favoriler"
+        title = "Favorites"
         view.backgroundColor = .systemBackground
 
         view.addSubview(collectionView)

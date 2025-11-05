@@ -31,9 +31,9 @@ final class AppRouter: AppRouterProtocol {
         let favoritesVC = container.makeFavoritesViewController(router: self)
         let profileVC = container.makeProfileViewController()
 
-        homeVC.tabBarItem = UITabBarItem(title: "Ana Sayfa", image: UIImage(systemName: "house"), tag: 0)
-        favoritesVC.tabBarItem = UITabBarItem(title: "Favoriler", image: UIImage(systemName: "heart.fill"), tag: 1)
-        profileVC.tabBarItem = UITabBarItem(title: "Profil", image: UIImage(systemName: "person"), tag: 2)
+        homeVC.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
+        favoritesVC.tabBarItem = UITabBarItem(title: "Favorites", image: UIImage(systemName: "heart.fill"), tag: 1)
+        profileVC.tabBarItem = UITabBarItem(title: "Profile", image: UIImage(systemName: "person"), tag: 2)
         
         let tabBarController = MainTabBarController(viewControllers: [
             UINavigationController(rootViewController: homeVC),

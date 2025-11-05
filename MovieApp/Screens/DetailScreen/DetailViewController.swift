@@ -24,6 +24,22 @@ final class DetailViewController: UIViewController {
     private var infoStackView = UIStackView()
     private var runtimeLabel = UILabel()
     private var releaseDateLabel = UILabel()
+    private var castTitleLabel = UILabel()
+    private lazy var castCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 12
+        layout.minimumInteritemSpacing = 0
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        cv.showsHorizontalScrollIndicator = false
+        cv.delegate = self
+        cv.dataSource = self
+        cv.register(CastCollectionViewCell.self, forCellWithReuseIdentifier: CastCollectionViewCell.identifier)
+        return cv
+    }()
     private var overviewTitleLabel = UILabel()
     private lazy var favoriteButton: UIButton = {
         let button = UIButton(type: .system)
@@ -115,6 +131,9 @@ extension DetailViewController {
 
             // Runtime and Release Date
             setupMovieInfo(runtime: movieDetail.runtimeText, releaseDate: movieDetail.releaseDateFormatted)
+
+            // Cast
+            setupCast(cast: movieDetail.cast)
         }
 
         viewModel?.onLoadingStateChanged = { [weak self] isLoading in
@@ -192,6 +211,17 @@ extension DetailViewController {
         }
     }
 
+    private func setupCast(cast: [Cast]) {
+        if cast.isEmpty {
+            castTitleLabel.isHidden = true
+            castCollectionView.isHidden = true
+        } else {
+            castTitleLabel.isHidden = false
+            castCollectionView.isHidden = false
+            castCollectionView.reloadData()
+        }
+    }
+
     private func showError(message: String) {
         errorLabel.text = message
         errorView.isHidden = false
@@ -213,6 +243,8 @@ extension DetailViewController {
         contentView.addSubview(taglineLabel)
         contentView.addSubview(genresStackView)
         contentView.addSubview(infoStackView)
+        contentView.addSubview(castTitleLabel)
+        contentView.addSubview(castCollectionView)
         contentView.addSubview(overviewTitleLabel)
         contentView.addSubview(overviewLabel)
         view.addSubview(loadingIndicator)
@@ -272,6 +304,11 @@ extension DetailViewController {
         runtimeLabel.textColor = .systemGray
         runtimeLabel.numberOfLines = 1
 
+        castTitleLabel.text = "Cast"
+        castTitleLabel.font = .systemFont(ofSize: 18, weight: .bold)
+        castTitleLabel.textColor = .label
+        castTitleLabel.isHidden = true
+
         loadingIndicator.hidesWhenStopped = true
         loadingIndicator.color = .systemBlue
 
@@ -291,7 +328,7 @@ extension DetailViewController {
         errorLabel.textAlignment = .center
         errorLabel.numberOfLines = 0
 
-        retryButton.setTitle("Tekrar Dene", for: .normal)
+        retryButton.setTitle("Retry", for: .normal)
         retryButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         retryButton.backgroundColor = .systemBlue
         retryButton.setTitleColor(.white, for: .normal)
@@ -321,6 +358,8 @@ extension DetailViewController {
         makeTaglineLabelConstraints()
         makeGenresStackViewConstraints()
         makeInfoStackViewConstraints()
+        makeCastTitleLabelConstraints()
+        makeCastCollectionViewConstraints()
         makeOverviewTitleLabelConstraints()
         makeOverviewLabelConstraints()
         makeLoadingIndicatorConstraints()
@@ -400,9 +439,25 @@ extension DetailViewController {
         }
     }
 
+    private func makeCastTitleLabelConstraints() {
+        castTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(infoStackView.snp.bottom).offset(20)
+            make.left.equalTo(contentView).offset(16)
+            make.right.equalTo(contentView).offset(-16)
+        }
+    }
+
+    private func makeCastCollectionViewConstraints() {
+        castCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(castTitleLabel.snp.bottom).offset(12)
+            make.left.right.equalTo(contentView)
+            make.height.equalTo(140)
+        }
+    }
+
     private func makeOverviewTitleLabelConstraints() {
         overviewTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(infoStackView.snp.bottom).offset(20)
+            make.top.equalTo(castCollectionView.snp.bottom).offset(20)
             make.left.equalTo(contentView).offset(16)
             make.right.equalTo(contentView).offset(-16)
         }
@@ -416,6 +471,30 @@ extension DetailViewController {
             make.bottom.equalTo(contentView).offset(-24)
         }
     }
-    
-    
+}
+
+// MARK: - UICollectionViewDataSource
+extension DetailViewController: UICollectionViewDataSource {
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel?.movieDetail?.cast.count ?? 0
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CastCollectionViewCell.identifier, for: indexPath) as? CastCollectionViewCell,
+              let cast = viewModel?.movieDetail?.cast[indexPath.item] else {
+            return UICollectionViewCell()
+        }
+
+        cell.configure(with: cast)
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension DetailViewController: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 100, height: 140)
+    }
 }

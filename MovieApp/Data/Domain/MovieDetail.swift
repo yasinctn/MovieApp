@@ -18,15 +18,16 @@ struct MovieDetail {
     let runtime: Int?
     let releaseDate: String?
     let tagline: String?
+    let cast: [Cast]
 
     var runtimeText: String? {
         guard let runtime = runtime, runtime > 0 else { return nil }
         let hours = runtime / 60
         let minutes = runtime % 60
         if hours > 0 {
-            return "\(hours)s \(minutes)dk"
+            return "\(hours)h \(minutes)m"
         } else {
-            return "\(minutes)dk"
+            return "\(minutes)m"
         }
     }
 
@@ -35,8 +36,8 @@ struct MovieDetail {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         guard let date = dateFormatter.date(from: releaseDate) else { return releaseDate }
-        dateFormatter.dateFormat = "dd MMMM yyyy"
-        dateFormatter.locale = Locale(identifier: "tr_TR")
+        dateFormatter.dateFormat = "MMMM dd, yyyy"
+        dateFormatter.locale = Locale(identifier: "en_US")
         return dateFormatter.string(from: date)
     }
 }
